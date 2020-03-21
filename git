@@ -1,0 +1,22 @@
+git
+git clone <repositories in github>
+
+cd inFile
+1/
+git status
+git add index.html
+git status
+git commit -m "Add index.html"
+git push
+usename and password
+
+2/
+git pull
+git status
+git add -A
+git status
+git commit -m "Made some changes"
+git push
+
+1/
+git pull
