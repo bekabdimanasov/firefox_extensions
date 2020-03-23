@@ -1,4 +1,4 @@
-chrome.runtime.sendMessage({method: "current_profile"}, function (response) {
+browser.runtime.sendMessage({method: "current_profile"}).then(response => {
 
         
     var scriptCode = '(' + function (WebGLInject) {
@@ -981,7 +981,7 @@ if (JSON.parse(response) === null) {
     var inject=function(filePath,seed){
     var script=document.createElement('script');
     script.setAttribute("data-seed",seed?seed:'');
-    script.src=chrome.extension.getURL(filePath);
+    script.src=browser.extension.getURL(filePath);
     script.onload = function(){
       this.remove();
     };

@@ -1,4 +1,4 @@
-chrome.runtime.sendMessage({method: "current_profile"}, function (response) {
+browser.runtime.sendMessage({method: "current_profile"}).then(response => {
 
 	var currentUrl = window.location.toString();
 	var blacklistUrl = "target.my.com";
@@ -7,7 +7,7 @@ chrome.runtime.sendMessage({method: "current_profile"}, function (response) {
         return;
     } 
     else { 
-	
+
 var scriptCode = '(' + function (injectFonts) {
 
 	'use strict';

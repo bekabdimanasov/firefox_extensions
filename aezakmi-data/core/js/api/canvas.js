@@ -1,4 +1,4 @@
-chrome.runtime.sendMessage({method: "current_profile"}, function (response) {
+browser.runtime.sendMessage({method: "current_profile"}).then(response => {
   if (JSON.parse(response) === null){
     return;
   } else {

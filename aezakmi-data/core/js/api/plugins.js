@@ -8,7 +8,7 @@
  */
 
 
-  async onPageCreated(page) {
+  async function onPageCreated(page) {
     await page.evaluateOnNewDocument(() => {
       function mockPluginsAndMimeTypes() {
         /* global MimeType MimeTypeArray PluginArray */
