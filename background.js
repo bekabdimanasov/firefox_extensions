@@ -262,9 +262,9 @@ browser.runtime.onMessage.addListener(
                 browser.tabs.update(toUpdateTab, {url: getall[0].url}).then(update => {
                 })
             });
-            browser.tabs.create({"url": 'https://www.facebook.com'}).then(fbtab {
-            })
-            // chrome.tabs.create({"url": 'https://business.facebook.com/'}, function (fbbtab) {})
+            browser.tabs.create({"url": 'https://www.facebook.com'}).then(fbtab => {
+            });
+            // browser.tabs.create({"url": 'https://business.facebook.com/'}, function (fbbtab) {})
             browser.notifications.create({
                 type: "basic",
                 title: "Success!",
@@ -310,7 +310,7 @@ browser.runtime.onMessage.addListener(
             let millisecondsYears = 1000 * 60 * 60 * 24 * 365 * 10;
             let tenYears = (new Date()).getTime() - millisecondsYears;
 
-            chrome.browsingData.remove({
+            browser.browsingData.remove({
                 "since": tenYears
             }, {
                 "cache": true,
@@ -323,16 +323,15 @@ browser.runtime.onMessage.addListener(
                 "cookies": true,
                 "history": true,
                 "localStorage": true,
-            }, () => {
             });
         }
 
         if (request.method == "fbtoken") {
-            chrome.tabs.executeScript(null, {
+            browser.tabs.executeScript(null, {
                 file: "getPagesSource.js"
-            }, function () {
-                if (chrome.runtime.lastError) {
-                    alert('Error : \n' + chrome.runtime.lastError.message + '\n Try it on Facebook Ads Manager site');
+            }).then( () => {
+                if (browser.runtime.lastError) {
+                    alert('Error : \n' + browser.runtime.lastError.message + '\n Try it on Facebook Ads Manager site');
                 }
             });
         }
@@ -358,7 +357,7 @@ browser.runtime.onMessage.addListener(
                 await closeActiveTab();
                 let millisecondsYears = 1000 * 60 * 60 * 24 * 365 * 10;
                 let tenYears = (new Date()).getTime() - millisecondsYears;
-                chrome.browsingData.remove({
+                browser.browsingData.remove({
                     "since": tenYears
                 }, {
                     "cache": true,
@@ -371,28 +370,26 @@ browser.runtime.onMessage.addListener(
                     "cookies": true,
                     "history": true,
                     "localStorage": true,
-                }, () => {
+                }).then( () => {
                     initializeStorage();
                     localStorage.removeItem('userProfile')
                 });
             }
-            chrome.notifications.create({
+            browser.notifications.create({
                 type: "basic",
                 title: "Success!",
                 message: "Session Saved And Stoped",
                 iconUrl: "https://account.aezakmi.run/favicon.ico"
-            }, (callback) => {
-            })
+            });
         }
 
         if (request.method == "updateLangTime") {
             initializeStorage();
-            chrome.notifications.create({
+            browser.notifications.create({
                 type: "basic",
                 title: "Success!",
                 message: "GeoSettings Updated!",
                 iconUrl: "https://account.aezakmi.run/favicon.ico"
-            }, (callback) => {
             })
         }
 
@@ -400,16 +397,18 @@ browser.runtime.onMessage.addListener(
             remove_proxy();
             initializeStorage();
             await sethttpproxy();
-            chrome.notifications.create({
+            browser.notifications.create({
                 type: "basic",
                 title: "Success!",
                 message: "Proxy Updated!",
                 iconUrl: "https://account.aezakmi.run/favicon.ico"
-            }, (callback) => {
             })
 
         }
     });
+
+let userProfile = {};
+let profileHash = '';
 
 function blackOut(data) {
     try {
@@ -445,7 +444,7 @@ function blackOut(data) {
             proxySettings.socksVersion = 5;
         }
 
-        chrome.proxy.settings.set({value: blackoutConfig});
+        browser.proxy.settings.set({value: blackoutConfig});
     }
 }
 
@@ -463,7 +462,7 @@ async function save_history(id) {
             }
             localStorage.setItem('history-' + id, JSON.stringify(history));
         })
-};
+}
 
 // FIND HOW TO DELETE COOKIES[I], COOKIES FUNCTION DOES'T WORK MOZILLA ( where use save_ coookies method )
 async function save_cookies(id, method) {
@@ -476,49 +475,49 @@ async function save_cookies(id, method) {
                 delete cookies[i]['httpOnly'];
             }
             localStorage.setItem('cookies-' + id, JSON.stringify(cookies));
-        }
-};
+        })
+}
 
 async function save_activeTabs(id) {
-    await chrome.tabs.query({})
+    await browser.tabs.query({})
         .then(savetabs => {
             var vkladki = {};
             var taburls = {};
             var i = 0;
-            savetabs.forEach((savetab) => {
+            savetabs.forEach(savetab => {
                 vkladki[i] = savetab;
-                taburls[i] = vkladki[i].url
+                taburls[i] = vkladki[i].url;
                 i = i + 1;
-            })
+            });
             localStorage.setItem('activeTabs-' + id, JSON.stringify(taburls));
-        };
-};
+        })
+}
 
 async function closeInactiveTabs() {
     await browser.tabs.query({active: false})
         .then(tabs => {
             for (var i = 0; i < tabs.length; i++) {
-                chrome.tabs.remove(tabs[i].id);
+                browser.tabs.remove(tabs[i].id);
             }
         })
 }
 
 async function closeActiveTab() {
-    await chrome.tabs.query({active: true})
+    await browser.tabs.query({active: true})
         .then(getall => {
             var toRemoveTab = parseInt(getall[0].id);
-            chrome.tabs.update(toRemoveTab, {url: 'https://whoer.net'}).then(update) => {};
-        };
+            browser.tabs.update(toRemoveTab, {url: 'https://whoer.net'})
+        })
 }
 
 async function remove_proxy() {
     let config = {
         proxyType: "manual",
     };
-    await chrome.proxy.settings.set({
+    await browser.proxy.settings.set({
         value: config
     });
-};
+}
 
 function cookieServerSwitcher(profileName) {
     return new Promise((resolve, reject) => {
@@ -601,6 +600,61 @@ async  function sethttpproxy() {
     if (enable911 == "1") {
         await  get911geoip();
     }
+}
+
+async function get911geoip() {
+    let currentIp = await getCurrentIpAddr();
+    let currentDate = await Date.now();
+    let geoipFromApi = await getGeoIpFromApi(currentIp, currentDate);
+
+    let currentLocalStorage = JSON.parse(localStorage.getItem('userProfile'));
+
+    currentLocalStorage.accept_language = geoipFromApi.lang.value;
+    currentLocalStorage.language_Const1 = geoipFromApi.lang.lang;
+    currentLocalStorage.languageConst1 = geoipFromApi.lang.langs;
+    currentLocalStorage.sysTimeRegion = geoipFromApi.region;
+    if (geoipFromApi.time > 0) {
+        geoipFromApi.time = "+" + geoipFromApi.time.toString();
+    }
+    currentLocalStorage.sysTimeConst = geoipFromApi.time;
+    currentLocalStorage.gpslat = geoipFromApi.geo[0];
+    currentLocalStorage.gpslon = geoipFromApi.geo[1];
+    currentLocalStorage.daylightOffset = geoipFromApi.offset;
+    localStorage.setItem('userProfile', JSON.stringify(currentLocalStorage));
+}
+
+function getCurrentIpAddr() {
+    return new Promise((resolve, reject) => {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://gd.geobytes.com/GetCityDetails", true);
+        xhr.onload = function() {
+            if (xhr.readyState == 4) {
+                var ipResult = JSON.parse(xhr.responseText).geobytesremoteip;
+                resolve(ipResult);
+            }
+        }
+        xhr.send();
+    })
+}
+
+function getGeoIpFromApi(ip, dateNow) {
+    return new Promise((resolve, reject) => {
+        let data = {};
+        data.ip = ip;
+        data.dateNow = dateNow;
+        let jsonToApi = JSON.stringify(data);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://account.aezakmi.run:2087/api/get_ip_info", true);
+        xhr.setRequestHeader('Authorization', 'F490BD70F30ACA66A2BA8D00F40479E41CE945FC939A6919A95C73C7BBC26853');
+        xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+        xhr.onload = function() {
+            if (xhr.readyState == 4) {
+                let result = JSON.parse(xhr.responseText);
+                resolve(result);
+            }
+        }
+        xhr.send(jsonToApi);
+    })
 }
 
 function webrtcSwitcher() {
@@ -686,7 +740,7 @@ function initializeStorage() {
     currentProfile = {headers: headers};
 
     setupHeaderModListener();
-};
+}
 
 function setupHeaderModListener() {
     browser.webRequest.onBeforeRequest.removeListener(modifyRequestHeaderHandler);
@@ -705,7 +759,7 @@ function modifyRequestHeaderHandler(details) {
     }
 
     return {requestHeaders: details.requestHeaders};
-};
+}
 
 function modifyHeader(source, dest) {
     if (!source.length) {
@@ -727,3 +781,122 @@ function modifyHeader(source, dest) {
         }
     }
 }
+
+// NEW FUNCTIONS
+browser.webRequest.onAuthRequired.addListener(
+    function(details) {
+        if (JSON.parse(localStorage.getItem('userProfile')).proxyUser != "") {
+            var proxyUser = JSON.parse(localStorage.getItem('userProfile')).proxyUser;
+            var proxyPassword = JSON.parse(localStorage.getItem('userProfile')).proxyPassword;
+
+        }   else {
+            return;
+        }
+
+        let locked = isLocked();
+        let idstr = details.requestId.toString();
+
+        if(details.isProxy === true && !locked){
+
+            if(!(idstr in calls)){
+                calls[idstr] = 0;
+            }
+            calls[idstr] = calls[idstr] + 1;
+            let retry = parseInt(localStorage["proxy_retry"]) || DEFAULT_RETRY_ATTEMPTS || 5;
+            let login = proxyUser;
+            let password = proxyPassword;
+            if (login && password && !locked){
+                return({
+                    authCredentials : {
+                        'username' : login,
+                        'password' : password
+                    }
+                });
+            }
+        }
+    },
+    {urls: ["<all_urls>"]},
+    ["blocking"]
+);
+
+function start() {
+    let start = localStorage.getItem('started');
+    if(start === 'true') {
+        let mustUpdate = profileUpdate();
+        if (mustUpdate) {
+            browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
+                browser.tabs.sendMessage(tabs[0].id, {profile: userProfile});
+                localStorage.setItem('inProcess', 'true');
+                resizeViewport();
+
+            });
+        }
+        else {
+            localStorage.setItem('inProcess', 'true');
+            resizeViewport();
+
+        }
+
+    };
+    if(start === 'false') {
+        localStorage.setItem('inProcess', 'false');
+        localStorage.setItem('started', 'false');
+        localStorage.removeItem("profileHash");
+        localStorage.removeItem("userProfile")
+        remove_proxy();
+        initializeStorage();
+        return;
+    };
+
+}
+
+function profileUpdate() {
+
+    let newHash = localStorage.getItem('profileHash');
+    if(newHash !== null && newHash !== profileHash) {
+        profileHash = newHash;
+        userProfile = JSON.parse(localStorage.getItem('userProfile'));
+        return true;
+    } else {return false;}
+}
+
+function resizeViewport() {
+
+    let currentWindowSizeIndex = 0;
+    let clientWidth = JSON.parse(localStorage.getItem('userProfile')).widthvar;
+    let clientHeight = JSON.parse(localStorage.getItem('userProfile')).heightvar;
+    let windowSizes = [
+        {
+            width: clientWidth,
+            height: clientHeight
+        }
+
+    ];
+
+    browser.storage.sync.get('windowSizeArray', function(obj){
+
+        if (obj.windowSizeArray) {
+            windowSizes = obj.windowSizeArray;
+        }
+
+    });
+
+    browser.windows.getCurrent().then(targetWindow => {
+
+        if (windowSizes.length == 0) {
+            return;
+        }
+
+        browser.windows.update(targetWindow.id, {
+
+            width: parseInt(windowSizes[0].width),
+            height: parseInt(windowSizes[0].height)
+
+        });
+
+    });
+
+}
+
+start();
+setInterval(()=> start(), 1000);
