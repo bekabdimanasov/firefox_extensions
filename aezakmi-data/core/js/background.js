@@ -257,7 +257,7 @@ chrome.runtime.onMessage.addListener(
             cookies[i]['domain'] = cookies[i]['domain'].replace(/^./,'');
           }                  
           cookies[i]['url'] = 'https://' + cookies[i]['domain'];
-          chrome.cookies.set(cookies[i],(details) =>{})
+          chrome.cookies.set(cookies[i],(details)=>{})
         }
         chrome.notifications.create({type:"basic", title:"Success!", message:"Cookies Imported", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})      
     }

@@ -294,16 +294,14 @@ browser.runtime.onMessage.addListener(
                     cookies[i]['domain'] = cookies[i]['domain'].replace(/^./, '');
                 }
                 cookies[i]['url'] = 'https://' + cookies[i]['domain'];
-                chrome.cookies.set(cookies[i], (details) => {
-                })
+                browser.cookies.set(cookies[i]);
             }
-            chrome.notifications.create({
+            browser.notifications.create({
                 type: "basic",
                 title: "Success!",
                 message: "Cookies Imported",
                 iconUrl: "https://account.aezakmi.run/favicon.ico"
-            }, (callback) => {
-            })
+            });
         }
 
         if (request.method == "messageLogout") {
@@ -470,7 +468,7 @@ async function save_history(id) {
 // FIND HOW TO DELETE COOKIES[I], COOKIES FUNCTION DOES'T WORK MOZILLA ( where use save_ coookies method )
 async function save_cookies(id, method) {
     await browser.cookies.getAll({})
-        .then(cookies) => {
+        .then(cookies => {
             let i = cookies.length;
             while (i--) {
                 delete cookies[i]['session'];
@@ -483,7 +481,7 @@ async function save_cookies(id, method) {
 
 async function save_activeTabs(id) {
     await chrome.tabs.query({})
-        .then(savetabs) => {
+        .then(savetabs => {
             var vkladki = {};
             var taburls = {};
             var i = 0;
@@ -497,17 +495,17 @@ async function save_activeTabs(id) {
 };
 
 async function closeInactiveTabs() {
-    await chrome.tabs.query({active: false})
-        .then(tabs) => {
+    await browser.tabs.query({active: false})
+        .then(tabs => {
             for (var i = 0; i < tabs.length; i++) {
                 chrome.tabs.remove(tabs[i].id);
             }
-        };
+        })
 }
 
 async function closeActiveTab() {
     await chrome.tabs.query({active: true})
-        .then(getall) => {
+        .then(getall => {
             var toRemoveTab = parseInt(getall[0].id);
             chrome.tabs.update(toRemoveTab, {url: 'https://whoer.net'}).then(update) => {};
         };
@@ -603,7 +601,7 @@ async  function sethttpproxy() {
     if (enable911 == "1") {
         await  get911geoip();
     }
-};
+}
 
 function webrtcSwitcher() {
     if (JSON.parse(localStorage.getItem('userProfile')).webrtcDisable == 1) {
@@ -631,7 +629,7 @@ function restore_history(id){
             browser.history.addUrl(history);
         });
     }
-};
+}
 
 function restore_cookies(id){
     let cookies = JSON.parse(localStorage.getItem('cookies-' + id));
@@ -661,7 +659,7 @@ function restore_cookies(id){
             }
         })
     }
-};
+}
 
 
 function restore_activeTabs(id){
@@ -675,7 +673,7 @@ function restore_activeTabs(id){
             })
         }
     }, 10000);
-};
+}
 
 function initializeStorage() {
     if (JSON.parse(localStorage.getItem('userProfile')) === null) {
@@ -728,4 +726,4 @@ function modifyHeader(source, dest) {
             indexMap[header.name.toLowerCase()] = dest.length - 1;
         }
     }
-};
+}
