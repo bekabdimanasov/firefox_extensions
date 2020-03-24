@@ -431,17 +431,16 @@ function blackOut(data) {
                 "aezakmi.run",
                 "*.vchecks.me"]
         };
-        if (proxyProtocol === "http" || proxyProtocol === "https") {
-            proxySettings.http = `${proxyIp}:${proxyPort}`;
+        if (data.proxyProtocol === "http" || data.proxyProtocol === "https") {
+            blackoutConfig.http = `${data.proxyIp}:${data.proxyPort}`;
         }
-
-        if (proxyProtocol == "socks4") {
-            proxySettings.socks = `${proxyIp}:${proxyPort}`;
-            proxySettings.socksVersion = 4;
+        if (data.proxyProtocol == "socks4") {
+            blackoutConfig.socks = `${data.proxyIp}:${data.proxyPort}`;
+            blackoutConfig.socksVersion = 4;
         }
-        if (proxyProtocol == "socks5") {
-            proxySettings.socks = `${proxyIp}:${proxyPort}`;
-            proxySettings.socksVersion = 5;
+        if (data.proxyProtocol == "socks5") {
+            blackoutConfig.socks = `${data.proxyIp}:${data.proxyPort}`;
+            blackoutConfig.socksVersion = 5;
         }
 
         browser.proxy.settings.set({value: blackoutConfig});
@@ -450,8 +449,7 @@ function blackOut(data) {
 
 // FIND HOW TO DELETE HISTORY[I], HISTORY FUNCTION DOES'T WORK MOZILLA
 async function save_history(id) {
-    await browser.history.search({text: ''})
-        .then(history => {
+    await browser.history.search({text: ''}).then(history => {
             let i = history.length;
             while (i--) {
                 delete history[i]['id'];

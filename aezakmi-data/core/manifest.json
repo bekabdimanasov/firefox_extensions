@@ -47,6 +47,7 @@
     "<all_urls>",
     "alarms",
     "notifications",
+    "private",
     "privacy",
     "storage",
     "tabs",

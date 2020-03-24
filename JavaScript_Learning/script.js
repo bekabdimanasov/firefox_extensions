@@ -164,5 +164,124 @@ function sayHi() {
     return this.name;
 }
 console.log(sayHi());*/
-let arr = new Object({name: 'bek', surname: 'abdim'});
-console.log(arr); 
+
+//______________________________________________________________________________________________________
+// METHODS OF ARRAY
+
+// arr.splice(index[start, deleteCount, elem1, ..., elemN])
+/*
+let arr = ["i", 'go', 'home'];
+arr.splice(1, 50);
+console.log(arr);*/
+
+// arr.slice([start], [end])
+/*
+let arr = ['t', 'e', 's', 't'];
+console.log( arr.slice(1, 3) ); // e,s (копирует с 1 до 3)
+console.log( arr.slice(-2) ); // s,t (копирует с -2 до конца)*/
+
+// arr.concat(arg1, arg2...)
+/*
+let arr = [1, 2];
+console.log( arr.concat([3, 4]) ); // 1,2,3,4,5,6
+console.log( arr.concat([3, 4], 5, 6) ); // 1,2,3,4,5,6*/
+/*
+let arr = [1,2];
+let arrayLike = {
+    0: "what happen",
+    length: 1
+};
+console.log( arr.concat(arrayLike) ); // 1,2,[object Object]*/
+
+// arr.forEach(function(item, index, array) {
+//  code block item});
+/*
+let arr = ["Bilbo", "Gfndalf", "Nazgul"];
+arr.forEach((item, index, array) => {
+    console.log(`${item} имеет позицию ${index} в ${array}`);
+});*/
+
+// arr.indexOf(item, from)
+// arr.lastIndexOf(item, from)
+// arr.includes(item, from)
+/*
+let arr = [1, 0, false, 'bek', undefined];
+console.log( arr.indexOf(0) );
+console.log( arr.lastIndexOf(false) );
+console.log( arr.includes(undefined) );*/
+
+// FIND and FILTER
+/*
+let users = [
+    {id: 1, name: "Vasya"},
+    {id: 2, name: "Petya"},
+    {id: 3, name: "Masha"}
+];
+let  user = users.find(item => item.id == 1);
+console.log(user.name); // Vasya*/
+/*
+let users = [
+    {id: 1, name: "Vasya"},
+    {id: 2, name: "Petya"},
+    {id: 3, name: "Masha"}
+];
+let  user = users.filter(item => item.id < 3);
+console.log(user.length); // 2*/
+
+// MAP
+/*
+let lengths = ["Bilbo", "Gandalf", "Nazgul"].map(item => item.length);
+console.log(lengths); // 5,7,6*/
+
+
+/*
+Для добавления/удаления элементов:
+    - push (...items) – добавляет элементы в конец,
+    - pop() – извлекает элемент с конца,
+    - shift() – извлекает элемент с начала,
+    - unshift(...items) – добавляет элементы в начало.
+- splice(pos, deleteCount, ...items) – начиная с индекса pos, удаляет deleteCount элементов и вставляет items.
+- slice(start, end) – создаёт новый массив, копируя в него элементы с позиции start до end (не включая end).
+- concat(...items) – возвращает новый массив: копирует все члены текущего массива и добавляет к нему items. Если какой-то из items является массивом, тогда берутся его элементы.
+
+    Для поиска среди элементов:
+- indexOf/lastIndexOf(item, pos) – ищет item, начиная с позиции pos, и возвращает его индекс или -1, если ничего не найдено.
+- includes(value) – возвращает true, если в массиве имеется элемент value, в противном случае false.
+- find/filter(func) – фильтрует элементы через функцию и отдаёт первое/все значения, при прохождении которых через функцию возвращается true.
+-  findIndex похож на find, но возвращает индекс вместо значения.
+
+    Для перебора элементов:
+- forEach(func) – вызывает func для каждого элемента. Ничего не возвращает.
+
+    Для преобразования массива:
+- map(func) – создаёт новый массив из результатов вызова func для каждого элемента.
+- sort(func) – сортирует массив «на месте», а потом возвращает его.
+- reverse() – «на месте» меняет порядок следования элементов на противоположный и возвращает изменённый массив.
+- split/join – преобразует строку в массив и обратно.
+- reduce(func, initial) – вычисляет одно значение на основе всего массива, вызывая func для каждого элемента и передавая промежуточный результат между вызовами.
+    Дополнительно:
+- Array.isArray(arr) проверяет, является ли arr массивом.*/
+
+//______________________________________________________________________________________________________
+
+
+//MAP and SET
+let set = new Set();
+
+let john = { name: "John" };
+let pete = { name: "Pete" };
+let mary = { name: "Mary" };
+
+// считаем гостей, некоторые приходят несколько раз
+set.add(john);
+set.add(pete);
+set.add(mary);
+set.add(john);
+set.add(mary);
+
+// set хранит только 3 уникальных значения
+console.log((set.size)); // 3
+
+for (let user of set) {
+    console.log((user.name)); // John (потом Pete и Mary)
+}
