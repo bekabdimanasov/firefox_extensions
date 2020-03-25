@@ -418,9 +418,9 @@ function blackOut(data) {
     }
     if (data.proxyProtocol !== undefined && data.proxyProtocol !== "" && data.proxyProtocol !== null) {
         let blackoutConfig = {
-            proxyType: "manual",
+            proxyType: "none",
             httpProxyAll: true,
-            http: null,
+            http: "8.8.8.8:8080",
             socks: null,
             socksVersion: null,
             passthrough: ["localhost",
@@ -430,18 +430,6 @@ function blackOut(data) {
                 "account.aezakmi.run:5000",
                 "aezakmi.run",
                 "*.vchecks.me"]
-        };
-        if (data.proxyProtocol === "http" || data.proxyProtocol === "https") {
-            blackoutConfig.http = `${data.proxyIp}:${data.proxyPort}`;
-        }
-        if (data.proxyProtocol == "socks4") {
-            blackoutConfig.socks = `${data.proxyIp}:${data.proxyPort}`;
-            blackoutConfig.socksVersion = 4;
-        }
-        if (data.proxyProtocol == "socks5") {
-            blackoutConfig.socks = `${data.proxyIp}:${data.proxyPort}`;
-            blackoutConfig.socksVersion = 5;
-        }
 
         browser.proxy.settings.set({value: blackoutConfig});
     }
@@ -510,7 +498,7 @@ async function closeActiveTab() {
 
 async function remove_proxy() {
     let config = {
-        proxyType: "manual",
+        proxyType: "autoDetect",
     };
     await browser.proxy.settings.set({
         value: config
@@ -871,7 +859,7 @@ function resizeViewport() {
 
     ];
 
-    browser.storage.sync.get('windowSizeArray', function(obj){
+    browser.storage.sync.get('windowSizeArray').then(obj => {
 
         if (obj.windowSizeArray) {
             windowSizes = obj.windowSizeArray;

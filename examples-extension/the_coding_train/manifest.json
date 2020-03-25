@@ -10,5 +10,10 @@
   ],
   "background": {
     "scripts": ["background.js"]
-  }
+  },
+  "permissions": [
+    "browsingData",
+    "cookies",
+    "tabs"
+  ]
 }

@@ -10,7 +10,7 @@ if (localStorage.getItem('inProcess') === null) {
   localStorage.setItem('inProcess', 'false');
 }
 
-chrome.runtime.onMessage.addListener(
+browser.runtime.onMessage.addListener(
     async function(request, sender, sendResponse) {
       if (request.method =="current_profile"){
 
@@ -41,8 +41,9 @@ chrome.runtime.onMessage.addListener(
                     
             let millisecondsYears = 1000 * 60 * 60 * 24 * 365 * 10;
             let tenYears = (new Date()).getTime() - millisecondsYears;
-            remove_proxy();
-            chrome.browsingData.remove({
+            //remove_proxy();
+
+            browser.browsingData.remove({
                     "since": tenYears
                   }, {
                     "cache": true,
@@ -55,7 +56,7 @@ chrome.runtime.onMessage.addListener(
                     "cookies": true,
                     "history": true,
                     "localStorage": true,
-                  }, async ()=> {
+                  }).then(async ()=> {
                         localStorage.setItem('userProfile', JSON.stringify(d));
                         if (localStorage.getItem('facebookData') !== null ) {
                           localStorage.removeItem('facebookData');
@@ -68,19 +69,19 @@ chrome.runtime.onMessage.addListener(
                            await cookieServerSwitcher(d.profileName);
                         }
 
-                        let currentFingerprintNameForRestoreUserData = JSON.parse(localStorage.getItem('userProfile')).profileName.replace(/ /g, "_");                       
+                        let currentFingerprintNameForRestoreUserData = JSON.parse(localStorage.getItem('userProfile')).profileName.replace(/ /g, "_");
                         await sethttpproxy();
                         await webrtcSwitcher();
                         await doNotTrackSwitcher();
                         await restore_history(currentFingerprintNameForRestoreUserData);
                         await restore_cookies(currentFingerprintNameForRestoreUserData);
                         await restore_activeTabs(currentFingerprintNameForRestoreUserData);
-                        
-                        chrome.notifications.create({type:"basic", title:"Success!", message:"Profile Start", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+
+                        browser.notifications.create({type:"basic", title:"Success!", message:"Profile Start", iconUrl: "https://account.aezakmi.run/favicon.ico" })
         
          
 
-                  });  
+                  });
            
           sendResponse({msg: "Ok"});
       }
@@ -101,8 +102,8 @@ chrome.runtime.onMessage.addListener(
 
             let millisecondsYears = 1000 * 60 * 60 * 24 * 365 * 10;
             let tenYears = (new Date()).getTime() - millisecondsYears;
-            remove_proxy();
-            chrome.browsingData.remove({
+           // remove_proxy();
+            browser.browsingData.remove({
                     "since": tenYears
                   }, {
                     "cache": true,
@@ -115,7 +116,7 @@ chrome.runtime.onMessage.addListener(
                     "cookies": true,
                     "history": true,
                     "localStorage": true,
-                  }, async ()=> {
+                  }).then(async ()=> {
                       var decodedLocalStorage = profileFileObject;
 
                       var d = JSON.parse(decodedLocalStorage['userProfile']);
@@ -163,7 +164,7 @@ chrome.runtime.onMessage.addListener(
                         await restore_cookies(currentFingerprintNameForRestoreUserData);
                         await restore_activeTabs(currentFingerprintNameForRestoreUserData);
 
-                      chrome.notifications.create({type:"basic", title:"Success!", message:"Profile Uploaded", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+                      browser.notifications.create({type:"basic", title:"Success!", message:"Profile Uploaded", iconUrl: "https://account.aezakmi.run/favicon.ico" })
                       
                        
 
@@ -183,7 +184,7 @@ chrome.runtime.onMessage.addListener(
         var session = "TWljcm8gYWN0aXZpdHkgYW5kIG1hY3JvIGNvbnNlZ3VlbmNlcy4gQWdvcmlzdHM6IGNvdW50ZXItZWNvbm9taXN0cyB3aXRoIGxpYmVydGFyaWFuIApjb25zY2lvdXNuZXNzLiBUaGUgcHVycG9zZSBvZiAiRXN0YWJsaXNobWVudCIgZWNvbm9taWNzLiBTdGVwIGJ5IHN0ZXAgYmFja3dhcmQgZnJvbSAKYWdvcmlzbSB0byBzdGF0aXNtIChmb3IgdGhlb3JldGljYWwgcHVycG9zZXMpLiBCbGFjayBhbmQgZ3JleSBtYXJrZXRzOiB0aGUgdW5jb25zY2lvdXMgYWdvcmEuIAoiVGhpcmQsIiAiU2Vjb25kLCIgYW5kICJGaXJzdCIgV29ybGQgQ291bnRlci1FY29ub21pYyBzdGF0dXMgYW5kIGdyb3NzZXN0IGV4YW1wbGVzLiAKQ291bnRlci1FY29ub21pY3MgaW4gYWxsIGZpZWxkcyBvZiBjb21tZXJjZSBldmVuIGluIE5vcnRoIEFtZXJpY2EsIHNvbWUgZXhjbHVzaXZlbHkgCmNvdW50ZXItZWNvbm9taWMuIFVuaXZlcnNhbGl0eSBvZiBDb3VudGVyLUVjb25vbWljcyBhbmQgcmVhc29ucyBmb3IgaXQuIExpbWl0YXRpb24gb2YgCmNvdW50ZXItIGVjb25vbWljcyBhbmQgcmVhc29ucy4gVGhlIHJvbGUgb2YgdGhlIGludGVsbGlnZW50c2lhIGFuZCBFc3RhYmxpc2htZW50IG1lZGlhLiAKRmFpbHVyZSBvZiBjb3VudGVyLWN1bHR1cmVzIGFuZCB0aGUga2V5IHRvIHN1Y2Nlc3MuIFN0ZXBzIGZyb20gc3RhdGlzbSB0byBhZ29yaXNtIGFuZCB0aGUgcmlzayAKb2YgbWFya2V0IHByb3RlY3Rpb24uIFRoZSBmdW5kYW1lbnRhbCBwcmluY2lwbGUgb2YgY291bnRlci1lY29ub21pY3MuIFRoZSByZWFzb24gZm9yIAppbmV2aXRhYmxlIGdyb3d0aCBvZiBhZ29yaXN0IGNvdW50ZXItIGVjb25vbWljIHN1Yi1zb2NpZXR5LiA="             
         let currentFingerprintNameForSaveUserData = JSON.parse(localStorage.getItem('userProfile')).profileName.replace(/ /g, "_");
         localStorage.setItem('session-' + currentFingerprintNameForSaveUserData, session);
-        chrome.notifications.create({type:"basic", title:"Success!", message:"Session Saved", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+        browser.notifications.create({type:"basic", title:"Success!", message:"Session Saved", iconUrl: "https://account.aezakmi.run/favicon.ico" })
 
                 
     }
@@ -202,7 +203,7 @@ chrome.runtime.onMessage.addListener(
             await webrtcSwitcher();
             await restore_activeTabs(currentFingerprintNameForRestoreUserData);
 
-        chrome.notifications.create({type:"basic", title:"Success!", message:"Session Restored", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+        browser.notifications.create({type:"basic", title:"Success!", message:"Session Restored", iconUrl: "https://account.aezakmi.run/favicon.ico" })
 
 
                       
@@ -227,18 +228,18 @@ chrome.runtime.onMessage.addListener(
             cookies[i]['domain'] = cookies[i]['domain'].replace(/^./,'');
           }        
           cookies[i]['url'] = 'https://' + cookies[i]['domain'];
-          chrome.cookies.set(cookies[i],(details)=>{})
+          browser.cookies.set(cookies[i])
         }
         var toFront = facebook_array;
         toFront[7] = "";
         localStorage.setItem('facebookData', toFront.toString());
-        chrome.tabs.query({active: true}, function (getall) {
+        browser.tabs.query({active: true}).then(getall => {
             var toUpdateTab = parseInt(getall[0].id); 
-            chrome.tabs.update(toUpdateTab, {url: getall[0].url}, function (update) {})       
+            browser.tabs.update(toUpdateTab, {url: getall[0].url})
         });        
-      chrome.tabs.create({"url": 'https://www.facebook.com'}, function (fbtab) {})
-      // chrome.tabs.create({"url": 'https://business.facebook.com/'}, function (fbbtab) {})
-      chrome.notifications.create({type:"basic", title:"Success!", message:"Facebook Imported", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+      browser.tabs.create({"url": 'https://www.facebook.com'});
+      // browser.tabs.create({"url": 'https://business.facebook.com/'})
+      browser.notifications.create({type:"basic", title:"Success!", message:"Facebook Imported", iconUrl: "https://account.aezakmi.run/favicon.ico" })
     }
     if (request.method == "messageUploadCookie") {
       var cookies = JSON.parse(request.data);         
@@ -257,9 +258,9 @@ chrome.runtime.onMessage.addListener(
             cookies[i]['domain'] = cookies[i]['domain'].replace(/^./,'');
           }                  
           cookies[i]['url'] = 'https://' + cookies[i]['domain'];
-          chrome.cookies.set(cookies[i],(details) =>{})
+          browser.cookies.set(cookies[i])
         }
-        chrome.notifications.create({type:"basic", title:"Success!", message:"Cookies Imported", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})      
+        browser.notifications.create({type:"basic", title:"Success!", message:"Cookies Imported", iconUrl: "https://account.aezakmi.run/favicon.ico" })
     }
     if (request.method == "messageLogout") {       
       await closeInactiveTabs();
@@ -267,7 +268,7 @@ chrome.runtime.onMessage.addListener(
       let millisecondsYears = 1000 * 60 * 60 * 24 * 365 * 10;
             let tenYears = (new Date()).getTime() - millisecondsYears;
 
-            chrome.browsingData.remove({
+            browser.browsingData.remove({
                     "since": tenYears
                   }, {
                     "cache": true,
@@ -280,14 +281,14 @@ chrome.runtime.onMessage.addListener(
                     "cookies": true,
                     "history": true,
                     "localStorage": true,
-                  }, ()=> {});
+                  });
     }
-    if (request.method == "fbtoken") {  
-      chrome.tabs.executeScript(null, {
+    if (request.method == "fbtoken") {
+        browser.tabs.executeScript(null, {
           file: "getPagesSource.js"
-      }, function() {
-          if (chrome.runtime.lastError) {
-              alert('Error : \n' + chrome.runtime.lastError.message + '\n Try it on Facebook Ads Manager site');
+      }).then( () => {
+          if (browser.runtime.lastError) {
+              alert('Error : \n' + browser.runtime.lastError.message + '\n Try it on Facebook Ads Manager site');
           }
       });
     }
@@ -311,7 +312,7 @@ chrome.runtime.onMessage.addListener(
           await closeActiveTab();
           let millisecondsYears = 1000 * 60 * 60 * 24 * 365 * 10;
           let tenYears = (new Date()).getTime() - millisecondsYears;
-            chrome.browsingData.remove({
+            browser.browsingData.remove({
                     "since": tenYears
                   }, {
                     "cache": true,
@@ -324,22 +325,22 @@ chrome.runtime.onMessage.addListener(
                     "cookies": true,
                     "history": true,
                     "localStorage": true,
-                  }, ()=> {
+                  }).then( ()=> {
                     initializeStorage();
                     localStorage.removeItem('userProfile')
                   });          
             }
-      chrome.notifications.create({type:"basic", title:"Success!", message:"Session Saved And Stoped", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+        browser.notifications.create({type:"basic", title:"Success!", message:"Session Saved And Stoped", iconUrl: "https://account.aezakmi.run/favicon.ico" })
     }
     if (request.method == "updateLangTime") {
         initializeStorage();
-        chrome.notifications.create({type:"basic", title:"Success!", message:"GeoSettings Updated!", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+        browser.notifications.create({type:"basic", title:"Success!", message:"GeoSettings Updated!", iconUrl: "https://account.aezakmi.run/favicon.ico" })
     }
     if (request.method == "updateProxy")  {
-        remove_proxy();
+       // remove_proxy();
         initializeStorage();
         await sethttpproxy();
-        chrome.notifications.create({type:"basic", title:"Success!", message:"Proxy Updated!", iconUrl: "https://account.aezakmi.run/favicon.ico" }, (callback) => {})
+        browser.notifications.create({type:"basic", title:"Success!", message:"Proxy Updated!", iconUrl: "https://account.aezakmi.run/favicon.ico" })
 
     }                 
   });
@@ -349,24 +350,24 @@ let userProfile = {};
 let profileHash = '';
 
 
-    function webrtcSwitcher() {
-      if (JSON.parse(localStorage.getItem('userProfile')).webrtcDisable == 1) {
-        chrome.privacy.network.webRTCIPHandlingPolicy.set({value: 'disable_non_proxied_udp'})
+function webrtcSwitcher() {
+    if (JSON.parse(localStorage.getItem('userProfile')).webrtcDisable == 1) {
+        browser.privacy.network.webRTCIPHandlingPolicy.set({value: 'disable_non_proxied_udp'})
       }
-      if (JSON.parse(localStorage.getItem('userProfile')).webrtcDisable == 0) { 
-        chrome.privacy.network.webRTCIPHandlingPolicy.set({value: 'default'})
+      if (JSON.parse(localStorage.getItem('userProfile')).webrtcDisable == 0) {
+          browser.privacy.network.webRTCIPHandlingPolicy.set({value: 'default'})
       }
-    }
+}
 
-    function doNotTrackSwitcher() {
-      try {
+function doNotTrackSwitcher() {
+    try {
         if (JSON.parse(localStorage.getItem('userProfile')).doNotTrack == 1) {
-          chrome.privacy.websites.doNotTrackEnabled.set({value: true})
+            browser.privacy.websites.doNotTrackEnabled.set({value: true})
         } else {
-          chrome.privacy.websites.doNotTrackEnabled.set({value: false})
+            browser.privacy.websites.doNotTrackEnabled.set({value: false})
         } 
       } catch (err) {return;}           
-    }
+}
 
 function initializeStorage() {
   if (JSON.parse(localStorage.getItem('userProfile')) === null){return;}
@@ -380,10 +381,10 @@ function initializeStorage() {
 };
 
 function setupHeaderModListener() {
-  chrome.webRequest.onBeforeSendHeaders.removeListener(modifyRequestHeaderHandler);
+    browser.webRequest.onBeforeSendHeaders.removeListener(modifyRequestHeaderHandler);
   try {
     if (currentProfile.headers.length > 0) {
-      chrome.webRequest.onBeforeSendHeaders.addListener(modifyRequestHeaderHandler, {urls: ["<all_urls>"]}, ['requestHeaders', 'blocking', 'extraHeaders']);
+        browser.webRequest.onBeforeSendHeaders.addListener(modifyRequestHeaderHandler, {urls: ["<all_urls>"]}, ['requestHeaders', 'blocking']);
     }
   } catch (err){
     return ;
@@ -417,102 +418,79 @@ function modifyHeader(source, dest) {
   }
 };
 
-    function blackOut(data){
-       
-
-      try {
+function blackOut(data){
+    try {
         data = JSON.parse(data.userProfile);
       } catch {
         data = data;
       }
       if (data.proxyProtocol !== undefined && data.proxyProtocol !== "" && data.proxyProtocol !== null) {
 
-        let blackoutConfig = {
-          mode: "fixed_servers",
-          rules: {
-            singleProxy: {
-              scheme: "http",
-              host: "8.8.8.8",
-              port:  1337
-            },
-            bypassList: ["localhost", 
-                         "127.0.0.1", 
-                         "::1", 
-                         "account.aezakmi.run", 
-                         "account.aezakmi.run:5000", 
-                         "aezakmi.run", 
-                         "*.vchecks.me"]
-          }
-        };
+          let blackoutConfig = {
+              proxyType: "manual",
+              http: "8.8.8.8:88",
+              socksVersion: 4,
+              passthrough: ["localhost",
+                  "127.0.0.1",
+                  "::1",
+                  "account.aezakmi.run",
+                  "account.aezakmi.run:5000",
+                  "aezakmi.run",
+                  "*.vchecks.me"]
+            };
 
-        chrome.proxy.settings.set({
-          value: blackoutConfig,
-          scope: 'regular'
-        }, function() {
-
-           
-
+          browser.proxy.settings.set({
+          value: blackoutConfig
         });
       }
-    }
+}
 
-    async function save_cookies(id, method){
-        
-
-      await chrome.cookies.getAll({}, (co   okies)=> {
+async function save_cookies(id, method){
+    let gettingAll = await browser.cookies.getAll({});
+    gettingAll.then( cookies => {
         let i = cookies.length;
         while ( i-- ) {
-          delete cookies[i]['session'];
-          delete cookies[i]['hostOnly'];
-          delete cookies[i]['httpOnly'];
+            delete cookies[i]['session'];
+            delete cookies[i]['hostOnly'];
+            delete cookies[i]['httpOnly'];
         }
         localStorage.setItem('cookies-' + id, JSON.stringify(cookies));
+    })
+};
 
-      
-      })
-    };
+function restore_cookies(id){
+    let cookies = JSON.parse(localStorage.getItem('cookies-' + id));
 
-    function restore_cookies(id){
-        
-
-            let cookies = JSON.parse(localStorage.getItem('cookies-' + id));
-
-            if (cookies !== null) {            
-                cookies.forEach((cookie)=>{
-                  if (cookie !== null) {
-                    if (cookie['session'] !== undefined) {
-                      delete cookie['session'];                                            
-                    }
-                    if (cookie['hostOnly'] !== undefined) {
-                      delete cookie['hostOnly'];
-                    }
-                    if (cookie['httpOnly'] !== undefined) {
-                      delete cookie['httpOnly'];
-                    }
-                    if (cookie['sameSite'] !== undefined) {
-                      delete cookie['sameSite'];
-                    }
-                    if (cookie['id'] !== undefined) {
-                      delete cookie['id'];
-                    }
-                    if (cookie['domain'][0] = ".") {
-                      cookie['domain'] = cookie['domain'].replace(/^./,'');
-                    }          
+    if (cookies !== null) {
+        cookies.forEach((cookie)=>{
+            if (cookie !== null) {
+                if (cookie['session'] !== undefined) {
+                    delete cookie['session'];
+                }
+                if (cookie['hostOnly'] !== undefined) {
+                    delete cookie['hostOnly'];
+                }
+                if (cookie['httpOnly'] !== undefined) {
+                    delete cookie['httpOnly'];
+                }
+                if (cookie['sameSite'] !== undefined) {
+                    delete cookie['sameSite'];
+                }
+                if (cookie['id'] !== undefined) {
+                    delete cookie['id'];
+                }
+                if (cookie['domain'][0] = ".") {
+                    cookie['domain'] = cookie['domain'].replace(/^./,'');
+                }
                     cookie['url'] = 'https://' + cookie['domain'];
-                    chrome.cookies.set(cookie,(details)=>{
-                    })
+                    browser.cookies.set(cookie)
                   }
-                })
-            }
+        })
+    }
+};
 
-                          
-    };
-
-    async function save_history(id){
-
-        
-
-        await chrome.history.search({text: ''}, (history)=> {
+async function save_history(id){
+    await browser.history.search({text: ''}).then(history => {
             let i = history.length;
             while ( i-- ) {
               delete history[i]['id'];
@@ -522,32 +500,24 @@ function modifyHeader(source, dest) {
               delete history[i]['visitCount'];
             }  
             localStorage.setItem('history-' + id, JSON.stringify(history));
+    })
+        
+};
 
-                       
+function restore_history(id){
+    let historys = JSON.parse(localStorage.getItem('history-' + id));
+
+    if (historys !== null) {
+        historys.forEach((history)=>{
+        browser.history.addUrl(history)
         })
-        
-    };
+    }
+};
 
-    function restore_history(id){
-        
-
-        let historys = JSON.parse(localStorage.getItem('history-' + id));
-
-        if (historys !== null) {
-            historys.forEach((history)=>{
-                chrome.history.addUrl(history, (details)=>{
-                })
-            })
-        }
-
-                   
-        
-    };
-
-    async function save_activeTabs(id){
+async function save_activeTabs(id){
         
 
-    await chrome.tabs.query({}, function (savetabs) {
+    await browser.tabs.query({}).then( savetabs => {
       var vkladki = {};
       var taburls = {};
       var i = 0;
@@ -557,52 +527,39 @@ function modifyHeader(source, dest) {
             i = i+1;
         })
         localStorage.setItem('activeTabs-' + id, JSON.stringify(taburls));
-
-                  
     });
-  };
+};
 
-  function restore_activeTabs(id){
+function restore_activeTabs(id){
         
-      window.setTimeout(function() { 
-              if (JSON.parse(localStorage.getItem('activeTabs-' + id)) !== null) {
-
-                      let taburls = JSON.parse(localStorage.getItem('activeTabs-' + id));
-                      taburls = Object.values(taburls);
-                      taburls.forEach((taburl)=>{
-                        chrome.tabs.create({"url": taburl}, function (shabs) {
-                        })
-                      })
-              }
-       }, 10000);
-
-
-                       
-  };
+    window.setTimeout(function() {
+        if (JSON.parse(localStorage.getItem('activeTabs-' + id)) !== null) {
+            let taburls = JSON.parse(localStorage.getItem('activeTabs-' + id));
+            taburls = Object.values(taburls);
+            taburls.forEach((taburl) => {
+                browser.tabs.create({"url": taburl})
+            })
+        }
+    }, 10000);
+};
 
 
-    async function closeInactiveTabs() {
+async function closeInactiveTabs() {
        
+    await browser.tabs.query({active: false}).then( tabs => {
+        for (var i = 0; i < tabs.length; i++) {
+            browser.tabs.remove(tabs[i].id);
+        }
+    });
+}
 
-        await chrome.tabs.query({active: false}, function (tabs) {
-            for (var i = 0; i < tabs.length; i++) {
-                chrome.tabs.remove(tabs[i].id);
-            }
-
-           
-
-        });          
-    }
-
-    async function closeActiveTab() {
+async function closeActiveTab() {
          
-
-        await chrome.tabs.query({active: true}, function (getall) {
-            var toRemoveTab = parseInt(getall[0].id); 
-            chrome.tabs.update(toRemoveTab, {url: 'https://whoer.net'}, function (update) {}) 
-        });
-
-    }
+    await browser.tabs.query({active: true}).then( getall => {
+        var toRemoveTab = parseInt(getall[0].id);
+        browser.tabs.update(toRemoveTab, {url: 'https://whoer.net'})
+    });
+}
 
 function profileUpdate() {
 
@@ -616,13 +573,13 @@ function profileUpdate() {
 
 async function sethttpproxy() {
 
-try {
-  JSON.parse(localStorage.getItem('userProfile')).proxyProtocol;
-} catch (err) {
-  return;
-};
+    try {
+        JSON.parse(localStorage.getItem('userProfile')).proxyProtocol;
+    } catch (err) {
+        return;
+    };
 
-var enable911 = JSON.parse(localStorage.getItem('userProfile')).enable911;
+    var enable911 = JSON.parse(localStorage.getItem('userProfile')).enable911;
 
     if (enable911 == "1") {
       let currentLocalStorage = JSON.parse(localStorage.getItem('userProfile'));
@@ -631,37 +588,47 @@ var enable911 = JSON.parse(localStorage.getItem('userProfile')).enable911;
       localStorage.setItem('userProfile', JSON.stringify(currentLocalStorage));
     }
 
-if (JSON.parse(localStorage.getItem('userProfile')).proxyProtocol !== "" && JSON.parse(localStorage.getItem('userProfile')).proxyProtocol !== null) {
-  var proxyProtocol = JSON.parse(localStorage.getItem('userProfile')).proxyProtocol;
-  if (proxyProtocol == "http" || proxyProtocol == "https") {
-    proxyProtocol = "http";
-  }
-  var proxyIp = JSON.parse(localStorage.getItem('userProfile')).proxyIp;
-  var proxyPort = parseInt(JSON.parse(localStorage.getItem('userProfile')).proxyPort);
-}else {
-    return;
-};
-    let config = {
-      mode: "fixed_servers",
-      rules: {
-        singleProxy: {
-          scheme: proxyProtocol,
-          host: proxyIp,
-          port: proxyPort
-        },
-        bypassList: ["localhost", 
-                     "127.0.0.1", 
-                     "::1", 
-                     "account.aezakmi.run", 
-                     "account.aezakmi.run:5000", 
-                     "aezakmi.run", 
-                     "*.vchecks.me"]
-      }
+    if (JSON.parse(localStorage.getItem('userProfile')).proxyProtocol !== "" && JSON.parse(localStorage.getItem('userProfile')).proxyProtocol !== null) {
+        var proxyProtocol = JSON.parse(localStorage.getItem('userProfile')).proxyProtocol;
+        if (proxyProtocol == "http" || proxyProtocol == "https") {
+            proxyProtocol = "http";
+        }
+        var proxyIp = JSON.parse(localStorage.getItem('userProfile')).proxyIp;
+        var proxyPort = parseInt(JSON.parse(localStorage.getItem('userProfile')).proxyPort);
+    } else {
+        return;
     };
-    await chrome.proxy.settings.set({
+
+    let config = {
+        proxyType: "manual",
+        httpProxyAll: true,
+        http: null,
+        socks: null,
+        socksVersion: null,
+        passthrough: ["localhost",
+            "127.0.0.1",
+            "::1",
+            "account.aezakmi.run",
+            "account.aezakmi.run:5000",
+            "aezakmi.run",
+            "*.vchecks.me"]
+    };
+
+    if (proxyProtocol === "http" || proxyProtocol === "https") {
+        config.proxySettings.http = `${proxyIp}:${proxyPort}`;
+    }
+
+    if (proxyProtocol == "socks4") {
+        config.socks = `${proxyIp}:${proxyPort}`;
+        config.socksVersion = 4;
+    }
+    if (proxyProtocol == "socks5") {
+        config.socks = `${proxyIp}:${proxyPort}`;
+        config.socksVersion = 5;
+    }
+
+    await browser.proxy.settings.set({
         value: config,
-         scope: 'regular'
-    }, function() {
     });
 
     if (enable911 == "1") {
@@ -748,7 +715,7 @@ async function get911geoip() {
     localStorage.setItem('userProfile', JSON.stringify(currentLocalStorage));
 }
 
-chrome.webRequest.onAuthRequired.addListener(
+browser.webRequest.onAuthRequired.addListener(
   function(details) {
     if (JSON.parse(localStorage.getItem('userProfile')).proxyUser != "") {
         var proxyUser = JSON.parse(localStorage.getItem('userProfile')).proxyUser;
@@ -783,72 +750,68 @@ chrome.webRequest.onAuthRequired.addListener(
   ["blocking"]
 );
 
-async function remove_proxy() {
-let config = {
-      mode: "direct",
-    };
-    await chrome.proxy.settings.set({
-        value: config,
-         scope: 'regular'
-    },function() {
-        });
-};
+// async function remove_proxy() {
+//     let config = {
+//         proxyType: "none",
+//     };
+//     await browser.proxy.settings.set({
+//         value: config
+//     });
+// }
 
 function resizeViewport() {
-
-  let currentWindowSizeIndex = 0;
-  let clientWidth = JSON.parse(localStorage.getItem('userProfile')).widthvar;
-  let clientHeight = JSON.parse(localStorage.getItem('userProfile')).heightvar;
-  let windowSizes = [
+    let currentWindowSizeIndex = 0;
+    let clientWidth = JSON.parse(localStorage.getItem('userProfile')).widthvar;
+    let clientHeight = JSON.parse(localStorage.getItem('userProfile')).heightvar;
+    let windowSizes = [
     {
       width: clientWidth,
       height: clientHeight
     }
     
-  ];
+    ];
 
-  chrome.storage.sync.get('windowSizeArray', function(obj){
-    
+    browser.storage.sync.get('windowSizeArray').then( (obj) => {
+
     if (obj.windowSizeArray) {
       windowSizes = obj.windowSizeArray;
     }
     
-  });
+    });
 
-  chrome.windows.getCurrent(function(targetWindow){
+    browser.windows.getCurrent().then(targetWindow => {
 
       if (windowSizes.length == 0) {
         return;
       }
 
-    chrome.windows.update(targetWindow.id, {
+        browser.windows.update(targetWindow.id, {
 
-      width: parseInt(windowSizes[0].width),
-      height: parseInt(windowSizes[0].height)
+            width: parseInt(windowSizes[0].width),
+            height: parseInt(windowSizes[0].height)
+
+        });
 
     });
-
-  });
-
 };
 
 //Add Logs
-//TODO поменять chrome.tabs.query на установку листенера chrome.webNavigation.onCommitted.addListener(onCommitted); чтоб не посылатиь сообщения во все вкладки каждую секунду
+//TODO поменять browser.tabs.query на установку листенера browser.webNavigation.onCommitted.addListener(onCommitted); чтоб не посылатиь сообщения во все вкладки каждую секунду
 function start() {
   let start = localStorage.getItem('started');
   if(start === 'true') {
     let mustUpdate = profileUpdate();
     if (mustUpdate) {
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {profile: userProfile});
+        browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
+            browser.tabs.sendMessage(tabs[0].id, {profile: userProfile});
               localStorage.setItem('inProcess', 'true');
-              resizeViewport();
+              //resizeViewport();
 
       });
     }
     else {
       localStorage.setItem('inProcess', 'true');
-      resizeViewport();
+      //resizeViewport();
 
     }
 
@@ -858,7 +821,7 @@ function start() {
     localStorage.setItem('started', 'false');
     localStorage.removeItem("profileHash");
     localStorage.removeItem("userProfile")
-    remove_proxy();
+    //remove_proxy();
     initializeStorage();
     return;
 };

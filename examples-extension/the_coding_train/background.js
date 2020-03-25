@@ -1,10 +1,12 @@
 
 
-chrome.browserAction.onClick.addListener(buttonClicked);
+    //get all cookies in the domain
+    var gettingAllCookies = browser.cookies.getAll({});
+    gettingAllCookies.then((cookies) => {
 
-function buttonClicked(tab) {
-    let msg = {
-        txt: "hello"
-    }
-    chrome.tabs.sendMessage(tab.id, msg)
-}
+        if (cookies.length > 0) {
+           console.log(cookies)
+        } else {
+            console.log("Error")
+        }
+    });
