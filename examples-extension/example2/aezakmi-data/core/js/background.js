@@ -446,8 +446,7 @@ function blackOut(data){
 }
 
 async function save_cookies(id, method){
-    let gettingAll = await browser.cookies.getAll({});
-    gettingAll.then( cookies => {
+    await browser.cookies.getAll({}, (cookies) => {
         let i = cookies.length;
         while ( i-- ) {
             delete cookies[i]['session'];
