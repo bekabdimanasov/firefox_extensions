@@ -1,0 +1,31 @@
+Rfr_j,sxyj0)
+
+%PROGRAMFILES%\aezakmi-browser\chrome.exe --disable-web-security --disable-infobars --load-extension="%PROGRAMFILES%"\aezakmi-browser\aezakmi-data\core\ --restore-last-session --user-data-dir=%APPDATA%\aezakmi-data\browser-profiles\2\ account.aezakmi.run
+
+save_history()
+save_cookies()
+save_activeTabs()
+closeInactiveTabs()
+closeActiveTab()
+
+sethttpproxy() - set, but errror Unchecked lastError value: Error: An unexpected error occurred
+
+
+remove_proxy();
+
+initializeStorage();
+
+webrtcSwitcher()
+
+doNotTrackSwitcher() - что это?
+
+restore_history()
+restore_cookies() - undefined - Unchecked lastError value: Error: An unexpected error occurred
+restore_activeTabs()
+
+profileUpdate()
+getCurrentIpAddr()
+
+
+
+get911geoip()
