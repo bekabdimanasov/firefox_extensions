@@ -1,4 +1,5 @@
 Rfr_j,sxyj0)
+dsf
 
 %PROGRAMFILES%\aezakmi-browser\chrome.exe --disable-web-security --disable-infobars --load-extension="%PROGRAMFILES%"\aezakmi-browser\aezakmi-data\core\ --restore-last-session --user-data-dir=%APPDATA%\aezakmi-data\browser-profiles\2\ account.aezakmi.run
 
