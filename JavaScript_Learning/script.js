@@ -266,7 +266,7 @@ console.log(lengths); // 5,7,6*/
 
 
 //MAP and SET
-let set = new Set();
+/*let set = new Set();
 
 let john = { name: "John" };
 let pete = { name: "Pete" };
@@ -285,3 +285,182 @@ console.log((set.size)); // 3
 for (let user of set) {
     console.log((user.name)); // John (потом Pete и Mary)
 }
+*/
+
+//__________________________________________________________________________________________
+/*Syntax Restructuring: Objects and Array.isArray
+
+1. let {prop : varName = default, ...rest} = object;
+2. let [item1: itemName = default, ...rest] = array;
+*/
+
+/*let user = {};
+[user.name, user.age] = "Ilya Kantor".split(" ");
+console.log(user);
+*/
+/*let title, width, hight;
+
+({title, width, hight = 200} = {title: "Menu", width: 100});
+console.log(hight)
+console.log(title)*/
+
+/*let option = {
+	size: {
+		width: 100,
+		hight: 300
+	},
+	items: ["Cake", "Donut"],
+	extra: true
+};
+
+let {
+	size: {
+		width,
+		hight
+	},
+	items,
+	title = "menu"
+} = option;
+
+console.log(title);
+console.log(width);
+console.log(items);
+console.log(items.item1);
+console.log(item2);*/
+
+/*let options = {
+	title: "My menu",
+	items: ["MyPotate", "MyDomate"]
+}
+
+function showMenu({title: t = "Unti", width=100, hight=300, items:[item1, item2]}) {
+	console.log(`${t} ${width} and ${hight}`);
+	console.log(item1);
+	console.log(item2);
+}
+
+showMenu(options);*/
+
+/*let user = { name: "John", years: 30};
+let {name, years, isAdmin=false} = user;
+console.log(name);
+console.log(years);
+console.log(isAdmin);*/
+
+/*let salaries = {
+	"John": 100,
+	"Pete": 300,
+	"Mary": 550
+};
+
+function topSalary(salariess) {
+	let max = 0;
+	let maxName = null;
+
+	for (let [key, value] of Object.entries(salariess)) {
+		if (max < value) {
+			max = value;
+			maxName = key;
+		}
+	}
+	return maxName;
+}
+
+console.log(topSalary(salaries));*/
+
+//__________________________________________________________________________________________
+/*Syntax Date */
+
+/*let now = new Date();
+console.log(now);*/
+
+
+// new Date(milliseconds)
+
+/*let start_Date = new Date();
+console.log(start_Date.setHours(0, 0, 0, 0));
+
+let start_Date2 = new Date(24*60*60*1000);
+console.log(start_Date2);
+
+let start_Date3 = new Date(-24*60*60*1000);
+console.log(start_Date3)*/
+
+/*
+let start = new Date();
+for (let i = 0; i < 100000; i++) {
+	let doSomething = i * i * i;
+}
+let end = new Date();
+console.log(`For working ${end - start} milliseconds`);*/
+
+/*function diffSubtract(d1, d2) {
+	return d2 - d1;
+}
+
+function diffGetTime(dt1, dt2) {
+	return dt2.getTime() - dt1.getTime();
+}
+
+function bench(fun) {
+	let date1 = new Date(0);
+	let date2 = new Date();
+
+	let start = Date.now();
+	for (let i = 0; i < 100000; i++) fun(date1, date2);
+	return Date.now() - start;
+}
+
+let time1 = 0,
+	time2 = 0;
+
+bench(diffSubtract);
+bench(diffGetTime);
+
+for (let i = 0; i < 10; i ++) {
+	time1 += bench(diffSubtract);
+	time2 += bench(diffGetTime);
+}
+console.log("Time difference diffSubtract: " + time1 + ' milliseconds.');
+console.log("Time difference diffGetTime: " + time2 + ' milliseconds.');*/
+
+/*//execise 1
+let datee = new Date(2012, 1, 20, 3, 12);
+console.log(datee);*/
+
+/*//execise 2
+let date = new Date(2012, 0, 3);
+function getLocalDay(dt) {
+	let day = dt.getDay();
+	if (day === 0) {
+		day = 7;
+	}
+
+	return day;
+}
+console.log(getLocalDay(date));*/
+
+/*//execise 3
+let date = new Date(2015, 0, 2);
+function getDateAgo(date, days) {
+	let dateCopy = new Date(date);
+	dateCopy.setDate(date.getDate() - days);
+	return dateCopy.getDate();
+}
+console.log(getDateAgo(date, 10));*/
+
+/*// execise 4
+function getLastDayOfMonth(years, month) {
+	let date = new Date(years, month + 1, 0);
+	return date.getDate();
+}
+console.log(getLastDayOfMonth(2020, 1));*/
+
+//execise 5
+function getSecondsToday() {
+  let now = new Date();
+  let tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
+  let diff = tomorrow - now;
+  return Math.round(diff / 1000); 
+}
+console.log( getSecondsToday() );
