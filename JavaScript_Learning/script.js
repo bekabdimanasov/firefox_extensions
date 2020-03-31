@@ -372,19 +372,17 @@ console.log(topSalary(salaries));*/
 /*Syntax Date */
 
 /*let now = new Date();
-console.log(now);*/
+console.log(now); //Sun Mar 29 2020 12:58:46 GMT+0300 (Moscow Standard Time)*/
 
 
 // new Date(milliseconds)
 
 /*let start_Date = new Date();
-console.log(start_Date.setHours(0, 0, 0, 0));
-
+console.log(start_Date.setHours(0, 0, 0, 0)); //1585429200000
 let start_Date2 = new Date(24*60*60*1000);
-console.log(start_Date2);
-
+console.log(start_Date2); //Fri Jan 02 1970 03:00:00 GMT+0300 (Moscow Standard Time)
 let start_Date3 = new Date(-24*60*60*1000);
-console.log(start_Date3)*/
+console.log(start_Date3) //Wed Dec 31 1969 03:00:00 GMT+0300 (Moscow Standard Time)*/
 
 /*
 let start = new Date();
@@ -456,11 +454,265 @@ function getLastDayOfMonth(years, month) {
 }
 console.log(getLastDayOfMonth(2020, 1));*/
 
-//execise 5
+/*//execise 5 - 6
 function getSecondsToday() {
   let now = new Date();
   let tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
   let diff = tomorrow - now;
   return Math.round(diff / 1000); 
 }
-console.log( getSecondsToday() );
+console.log( getSecondsToday() );*/
+
+/*//execise 7
+function formatDate(date) {
+
+}*/
+
+//__________________________________________________________________________________________
+/*Syntax Format JSON, Method toJSON */
+
+/*JSON поддерживает следующие типы данных:
+1. Объекты { ... }
+2. Массивы [ ... ]
+3. Примитивы:
+ - строки,
+ - числа,
+ - логические значения true/false,
+ - null.*/
+
+//JavaScript предоставляет методы:
+
+//1) JSON.stringify для преобразования объектов в JSON.  SYNTAX - let json JSON.stringify(value[, replacer, space]);
+/*let student = {
+	name: 'John',
+	age: 30,
+	isAdmin: false,
+	couses: ['html', 'css', 'js'],
+	wife: null,
+	sayHi() {  // function будет пропущено
+		console.log('Hello');
+	},
+	[Symbol("id")]: 123, // Symbol будет пропущено
+	something: undefined, // undefined будет пропущено
+	room: {
+    number: 23,
+    participants: ["john", "ann"]
+  }
+};
+
+let json = JSON.stringify(student);
+console.log(typeof json);
+console.log(json);*/
+
+
+/*// - Ошибка: Преобразование цикличной структуры в JSON
+
+let room = {
+	number: 23
+};
+let meetup = {
+	title: "Conference",
+	participents: ["john", 'ann']
+};
+
+meetup.place = room;
+let jsonMeetup = JSON.stringify(meetup);
+console.log(jsonMeetup);
+
+room.occupiedBy = meetup; //Ошибка: Преобразование цикличной структуры в JSON
+let jsonRoom = JSON.stringify(room); 
+console.log(jsonRoom);*/
+
+
+
+//2) JSON.parse для преобразования JSON обратно в объект. SYNTAX - let value = JSON.parse(str, [reviver]);
+
+/*let user = '{ "name": "John", "age": 35, "isAdmin": false, "friends": [0,1,2,3]}';
+user = JSON.parse(user);
+console.log(user.isAdmin);*/
+
+
+/*let str = '{"title":"Conference","date":"2020-02-29T16:52:12.123Z"}';
+let meetup = JSON.parse(str, function(key, value) {
+  if (key == 'date')  {
+  	value = new Date(value);
+  }
+  return value;
+});
+console.log( meetup.date.getDate() ); // 30 - теперь работает!*/
+
+/*//execise 1
+let room = {
+  number: 23
+};
+let meetup = {
+  title: "Meeting",
+  occupiedBy: [{name: "Ivanov"}, {name: "Petrov"}],
+  place: room
+};
+// цикличные ссылки
+room.occupiedBy = meetup;
+meetup.self = meetup;
+console.log( JSON.stringify(meetup, function replacer(key, value) {
+  return (key != "" && value == meetup) ? undefined : value;
+}));*/
+
+
+//__________________________________________________________________________________________
+/*Syntax RECURSION and STACK*/
+
+// 1. Итеративный способ: цикл for:
+/*function pow(x, n) {
+	let result = 1;
+
+	for (let i=0; i<n; i++) {
+		result *= x;
+	}
+	return result;
+}
+console.log(pow(2, 8));*/
+
+// 2. Рекурсивный способ: упрощение задачи и вызов функцией самой себя:
+/*function pow(x, n) {
+	return (n == 1) ? x : (x * pow(x, n-1));
+}
+console.log(pow(2, 3));*/
+
+
+// Контекст выполнения, стек
+/*let company = {
+	sales: [{ name: "John", salary: 1000}, {name: "Alice", salary: 600}],
+	development: {
+		sites: [{name: "Peter", salary: 2000}, {name: "Alex", salary: 1800}],
+		internals: [{name: "Jack", salary: 1300}]
+	}
+};
+
+function sumSalaries(departmant) {
+	if (Array.isArray(departmant)) {
+		return departmant.reduce((prev, current) => prev + current.salary, 0);
+	} else {
+		let sum = 0;
+		for (let subDepartmant of Object.values(departmant)) {
+			sum += sumSalaries(subDepartmant);
+		}
+		return sum;
+	}
+}
+console.log(sumSalaries(company));*/
+
+/*
+// Связанный список
+// let arr = [obj1, obj2, obj3];
+
+let list = {
+	value: 1,
+	next: {
+		value: 2,
+		next: {
+			value: 3,
+			next: {
+				value: 4,
+				next: null
+			}
+		}
+	}
+};
+OR
+let list = {value: 1},
+	list.next = {value: 2},
+	list.next.next = {value: 3},
+	list.next.next.next = {value: 4};
+
+
+// Список можно легко разделить на несколько частей и впоследствии объединить обратно:
+let secondList = list.next.next;
+list.next.next = null;
+// Для объединения:
+list.next.next = secondList;*/
+
+
+/*//execise 1
+function sumTo(n) {
+	return (n == 1) ? n : ( n + sumTo(n-1) );
+}
+console.log(sumTo(1));
+console.log(sumTo(4));
+console.log(sumTo(100));*/
+
+/*// execise 2
+function factorial(n) {
+	return (n == 1) ? n : ( n * factorial(n - 1) );
+}
+console.log(factorial(5))*/
+
+// execise 3
+
+/*function fib(n) {
+	return (n <= 1) ? n : fib(n - 1) + fib(n - 2);
+}
+console.log(fib(77))*/  // ВЫЧИСЛЯЕТСЯ ОЧЕНЬ ДОЛГО
+
+/*function fib(n) {
+	let a = 1,
+		b = 1;
+	for (let i = 3; i <= n; i++) {
+		let c = a+b;
+		a = b;
+		b = c;
+	}
+	return b;
+}
+console.log(fib(770));*/
+
+
+//__________________________________________________________________________________________
+// Замыкание
+
+/*let name = "John";
+function sayHi() {
+	console.log(`Hi, ${name}`);
+}
+name = 'Pete';
+sayHi(); // Hi, Pete*/
+
+/*function makeWorker() {
+	let name = "John";
+	return function() {
+		console.log(name);
+	}
+}
+let name = "Pete";
+let work = makeWorker();
+work(); // John*/
+
+
+
+//Вложенные функции (CALLBACK Function)
+
+/*function User(name) {
+	this.sayHi = function() {
+		console.log(name);
+	};
+}
+let user = new User('John');
+user.sayHi() //John*/
+
+/*function makeCounter() {
+	let count = 0;
+	return function() {
+		return count++;
+	};
+}
+let counter1 = makeCounter();
+let counter2 = makeCounter();
+console.log(counter1()); // 0
+console.log(counter1()); // 1
+console.log(counter2()); // 0 (независимо)*/
+
+
+// Окружение в деталях
+
+document.head.style.background = 'red'; // сделать фон красным
+
+//setTimeout(() => document.body.style.background = '', 3000); // вернуть назад
