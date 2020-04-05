@@ -713,6 +713,64 @@ console.log(counter2()); // 0 (независимо)*/
 
 // Окружение в деталях
 
-document.head.style.background = 'red'; // сделать фон красным
 
-//setTimeout(() => document.body.style.background = '', 3000); // вернуть назад
+//__________________________________________________________________________________________
+// Планирование: setTimeout и setInterval
+
+// 1. setTimeout
+// let timeId = setTimeout(func|cond, [delay], [arg1], [arg2], ...)
+
+/*
+function sayHi(phrase, who) {
+    alert(phrase + ", " + who);
+}
+setTimeout(sayHi, 1500, "Hello", "John");*/
+
+//setTimeout(() => alert("Hello"), 1000);
+
+
+// 2. setInterval
+// let timerId = setInterval(func|code, [delay], [arg1], [arg2], ...)
+
+/*
+let timerId = setInterval(() => alert('tick'), 2000);
+setTimeout(() => {clearInterval(timerId); alert("stop")}, 5000)*/
+
+//__________________________________________________________________________________________
+// Декораторы и переадресация вызова, сall/apply
+
+/*
+function slow(x) {
+    alert(`Calling with ${x}`);
+    return x;
+}
+function cachingDecorator(func) {
+    let cache = new Map();
+    return function (x) {
+        if (cache.has(x)) {
+            return cache.get(x);
+        }
+
+        let result = func(x);
+
+        cache.set(x, result);
+        return result;
+    };
+}
+slow = cachingDecorator(slow);
+
+alert(slow(1));
+alert("Again: " + slow(1));
+
+alert(slow(2));
+alert("Again: " + slow(2));*/
+
+
+// Применение «func.call» для передачи контекста.
+// func.call(context, arg1, arg2, ...)
+
+function say(phrase) {
+    alert(this.name + ': ' + phrase);
+}
+let user = {name: "John"};
+say.call(user, "Hello");

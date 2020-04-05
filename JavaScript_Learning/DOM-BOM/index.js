@@ -1,0 +1,1 @@
+alert(table.row[0].cells[1].innerHTML)
