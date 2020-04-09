@@ -769,8 +769,12 @@ alert("Again: " + slow(2));*/
 // Применение «func.call» для передачи контекста.
 // func.call(context, arg1, arg2, ...)
 
-function say(phrase) {
-    alert(this.name + ': ' + phrase);
-}
-let user = {name: "John"};
+function say(phrase) { alert(this.name + ': ' + phrase); }
+let user = { 
+	name: "John" 
+};
 say.call(user, "Hello");
+
+let a = {
+	name: "bek"
+}
